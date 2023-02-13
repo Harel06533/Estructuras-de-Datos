@@ -65,16 +65,18 @@ void initial (Cell matrix[rows][columns]) {
     (pointerMatrix + i) -> isTaken = false;
   }
 
-  //Iterar en alguna posición random y llenarla
+  /*
+  * Esta sección es un while que loopea hasta que se haya cumplido con el porcentaje requerido de asientos a llenar.  
+  * Iterará en un índice rándom, si no hay nada, lo llena y setea sus propiedades iniciales.
+  * Dependiendo del cuarto del porcentaje (25%) que se encuentre, algunas propiedad varían. 
+  */
   while (seatCounter != limitTaken) {
     randomIndex = randomNumber((rows * columns) + 1);
-    if((pointerMatrix + randomIndex) -> isTaken == true) continue;
-
     if ((pointerMatrix + randomIndex) -> isTaken == false) {
       (pointerMatrix + randomIndex) -> isTaken = true;
       (pointerMatrix + randomIndex) -> pstatus = 0;
       (pointerMatrix + randomIndex) -> id = id;
-      (pointerMatrix + randomIndex) -> age = randomNumber(91);
+      (pointerMatrix + randomIndex) -> age = randomNumber(91) + 1;
       (pointerMatrix + randomIndex) -> days = 0;
 
       if (celstatCounter <= limitTaken / 4) {
@@ -109,27 +111,49 @@ void printMatrix (Cell matrix[rows][columns]) {
     for (int j = 0; j < rows; j++) {
       //Guardar la celda de manera efectiva
       currentCell = *(pointerMatrix + (i * columns) + j);
-      if (currentCell.isTaken == false) 
-        printf(" "); 
-
-      if (currentCell.isVaccinated == false && currentCell.pstatus == 0 && currentCell.isFaceMasked == false) {
-        printf("S ");
+      if (currentCell.isTaken == false) {
+        printf("  ");
+      } else if (currentCell.isVaccinated == false && currentCell.pstatus == 0 && currentCell.isFaceMasked == false) {
+        printf(ANSI_COLOR_YELLOW"S "ANSI_COLOR_RESET);
       } else if (currentCell.isVaccinated == false && currentCell.pstatus == 0 && currentCell.isFaceMasked == true) {
-        printf("s ");
+        printf(ANSI_COLOR_CYAN"s "ANSI_COLOR_RESET);
       } else if (currentCell.isVaccinated == true && currentCell.pstatus == 0 && currentCell.isFaceMasked == false) {
-        printf("V ");
+        printf(ANSI_COLOR_BLUE"V "ANSI_COLOR_RESET);
       } else if (currentCell.isVaccinated == true && currentCell.pstatus == 0 && currentCell.isFaceMasked == true) {
-        printf("v ");
+        printf(ANSI_COLOR_GREEN"v "ANSI_COLOR_RESET);
       } else if (currentCell.pstatus == 1 && currentCell.isFaceMasked == false) {
-        printf("E ");
-      } else if (currentCell.pstatus == 1 && currentCell.isFaceMasked) {
-        printf("e ");
+        printf(ANSI_COLOR_RED"E "ANSI_COLOR_RESET);
+      } else if (currentCell.pstatus == 1 && currentCell.isFaceMasked == true) {
+        printf(ANSI_COLOR_MAGENTA"e "ANSI_COLOR_RESET);
       } else if (currentCell.pstatus == 2) {
         printf("r ");
       }
     }
     printf("\n");
   }
+}
+
+/*
+* "INFECTAR" las celdas vecinas. Esta función corre en main
+*/
+int checkNeighbor (Cell *currentCell, Cell *compareCell) {
+  int currentMasked = currentCell -> isFaceMasked;
+  int compareMasked = compareCell -> isFaceMasked;
+  int vaccinated = compareCell -> isVaccinated;
+  int randProb = randomNumber(100);
+  int prob;
+
+  if (currentMasked == true) {
+    prob = compareMasked ? (vaccinated ? 5 : 10) : (vaccinated ? 15 : 20);
+  } else {
+    prob = compareMasked ? (vaccinated ? 15 : 20) : (vaccinated ? 45 : 90);
+  }
+  
+  if (randProb < prob) {
+    compareCell -> pstatus = 1;
+    return 1;
+  }
+  return 0;
 }
 
 #endif
