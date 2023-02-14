@@ -12,6 +12,7 @@ INCLUDES
 =========
 */
 #include "structs.h"
+#include <stdio.h>
 #include <time.h>
 #include <stdlib.h>
 
@@ -22,13 +23,13 @@ GLOBALS
 */
 
 //Colores
-#define ANSI_COLOR_RED     "\x1b[31m"
-#define ANSI_COLOR_GREEN   "\x1b[32m"
-#define ANSI_COLOR_YELLOW  "\x1b[33m"
-#define ANSI_COLOR_BLUE    "\x1b[34m"
-#define ANSI_COLOR_MAGENTA "\x1b[35m"
-#define ANSI_COLOR_CYAN    "\x1b[36m"
-#define ANSI_COLOR_RESET   "\x1b[0m"
+#define RED     "\x1b[31m"
+#define GREEN   "\x1b[32m"
+#define YELLOW  "\x1b[33m"
+#define BLUE    "\x1b[34m"
+#define MAGENTA "\x1b[35m"
+#define CYAN    "\x1b[36m"
+#define RESET   "\x1b[0m"
 
 /*
 =========
@@ -113,22 +114,16 @@ void printMatrix (Cell matrix[rows][columns]) {
       currentCell = *(pointerMatrix + (i * columns) + j);
       if (currentCell.isTaken == false) {
         printf("  ");
-      } else if (currentCell.isVaccinated == false && currentCell.pstatus == 0 && currentCell.isFaceMasked == false) {
-        printf(ANSI_COLOR_YELLOW"S "ANSI_COLOR_RESET);
-      } else if (currentCell.isVaccinated == false && currentCell.pstatus == 0 && currentCell.isFaceMasked == true) {
-        printf(ANSI_COLOR_CYAN"s "ANSI_COLOR_RESET);
-      } else if (currentCell.isVaccinated == true && currentCell.pstatus == 0 && currentCell.isFaceMasked == false) {
-        printf(ANSI_COLOR_BLUE"V "ANSI_COLOR_RESET);
-      } else if (currentCell.isVaccinated == true && currentCell.pstatus == 0 && currentCell.isFaceMasked == true) {
-        printf(ANSI_COLOR_GREEN"v "ANSI_COLOR_RESET);
-      } else if (currentCell.pstatus == 1 && currentCell.isFaceMasked == false) {
-        printf(ANSI_COLOR_RED"E "ANSI_COLOR_RESET);
-      } else if (currentCell.pstatus == 1 && currentCell.isFaceMasked == true) {
-        printf(ANSI_COLOR_MAGENTA"e "ANSI_COLOR_RESET);
+      } else if (currentCell.isVaccinated == false && currentCell.pstatus == 0) {
+        (currentCell.isFaceMasked == true) ? printf(CYAN"s "RESET) : printf(YELLOW"S "RESET);
+      } else if (currentCell.isVaccinated == true && currentCell.pstatus == 0) {
+        (currentCell.isFaceMasked) ? printf(GREEN"v "RESET) : printf(BLUE"V "RESET); 
+      } else if (currentCell.pstatus == 1) {
+        (currentCell.isFaceMasked) ? printf(MAGENTA"e "RESET) : printf(RED"E "RESET);
       } else if (currentCell.pstatus == 2) {
         printf("r ");
       }
-    }
+    } 
     printf("\n");
   }
 }
@@ -143,11 +138,11 @@ int checkNeighbor (Cell *currentCell, Cell *compareCell) {
   int randProb = randomNumber(100);
   int prob;
 
-  if (currentMasked == true) {
+  if (currentMasked == true) 
     prob = compareMasked ? (vaccinated ? 5 : 10) : (vaccinated ? 15 : 20);
-  } else {
+   
+  if (currentMasked == false) 
     prob = compareMasked ? (vaccinated ? 15 : 20) : (vaccinated ? 45 : 90);
-  }
   
   if (randProb < prob) {
     compareCell -> pstatus = 1;

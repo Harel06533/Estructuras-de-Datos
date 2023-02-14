@@ -27,6 +27,14 @@ CELDAS
 #define true 1
 #define false 0
 
+/*
+============
+VECINOS 
+CERCANOS
+============
+*/
+
+const int nindex[8] = {-31, -30, -29, -1, 1, 29, 30, 31};
 //Estructura
 typedef struct {
   //bools

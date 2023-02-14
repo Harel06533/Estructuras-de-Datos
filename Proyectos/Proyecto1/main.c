@@ -24,21 +24,26 @@ OPERATIVO
 */
 #ifdef _WIN32
 #include <windows.h>
-void wait (float seconds) {
-  Sleep(seconds * 1000);
-}
-void clear () {
-  system("cls");
-}
 #else
 #include <unistd.h>
-void wait (float seconds) {
-  sleep(seconds);
-}
-void clear () {
-  system("clear");
-}
 #endif
+
+void wait (int seconds) {
+  #ifdef _WIN32
+  Sleep(seconds * 1000);
+  #else
+  sleep(seconds);  
+  #endif
+}
+
+void clear () {
+  #ifdef _WIN32
+  system("cls");
+  #else
+  system("clear");
+  #endif
+}
+
 
 /*
 ===========
@@ -63,12 +68,12 @@ int main () {
   clear();
   printf("===== SIMULADOR DE SarsCOV-2 =====\n");
   printf("Importante para el Usuario:\n");
-  printf(ANSI_COLOR_YELLOW"S = NO VACUNADO - SANO - SIN CUBREBOCAS\n"ANSI_COLOR_RESET);
-  printf(ANSI_COLOR_CYAN"s = NO VACUNADO - SANO - CON CUBREBOCAS\n"ANSI_COLOR_RESET);
-  printf(ANSI_COLOR_BLUE"V = VACUNADO - SANO - SIN CUBREBOCAS\n"ANSI_COLOR_RESET);
-  printf(ANSI_COLOR_GREEN"v = VACUNADO - SANO - CON CUBREBOCAS\n"ANSI_COLOR_RESET);
-  printf(ANSI_COLOR_RED"E = ENFERMO - SIN CUBREBOCAS\n"ANSI_COLOR_RESET);
-  printf(ANSI_COLOR_MAGENTA"e = ENFERMO - CON CUBREBOCAS\n"ANSI_COLOR_RESET);
+  printf(YELLOW"S = NO VACUNADO - SANO - SIN CUBREBOCAS\n"RESET);
+  printf(CYAN"s = NO VACUNADO - SANO - CON CUBREBOCAS\n"RESET);
+  printf(BLUE"V = VACUNADO - SANO - SIN CUBREBOCAS\n"RESET);
+  printf(GREEN"v = VACUNADO - SANO - CON CUBREBOCAS\n"RESET);
+  printf(RED"E = ENFERMO - SIN CUBREBOCAS\n"RESET);
+  printf(MAGENTA"e = ENFERMO - CON CUBREBOCAS\n"RESET);
   printf("r = RECUPERADO\n");
 
   printf("Presione Enter para continuar: ");
@@ -106,36 +111,54 @@ int main () {
   printf("Presione Enter para comenzar el proceso: ");
   scanf("%c", &enter);
 
-  clear();
-  /*
-  //Propiedades del paciente 0 y sus vecinos
-  for (int i = 0; i < 3; i++) {
-    index = (-31) + (30 * (i % 3));
-    for (int j = 0; j < 3; j++) {
-      checkNeighbor((pSars + randomP), (pSars + randomP + index));
-      index += 1;
-    }
-  }
-  */
-
   //Proceso. Se inicializa el paciente 0 con sus respectivos días enfermo como referencia
   while (true) {
     clear();
 
     //Iterar
     for (int i = 0; i < rows * columns; i++) {
+      if ((pSars + i) -> pstatus == 1 &&(pSars + i) -> days == 8) {
+        (pSars + i) -> pstatus = 2;
+        sickNum--;
+        restNum++;
+      }
       if ((pSars + i) -> pstatus == 1) {
-        (pSars + i) -> days++;
-        sickNum += checkNeighbor((pSars + i), ((pSars + i)  - 31));
-        sickNum += checkNeighbor((pSars + i), ((pSars + i) - 30));
-        sickNum += checkNeighbor((pSars + i), ((pSars + i) - 29));
-        sickNum += checkNeighbor((pSars + i), ((pSars + i) - 1));
-        sickNum += checkNeighbor((pSars + i), ((pSars + i) + 1));
-        sickNum += checkNeighbor((pSars + i), ((pSars + i) + 29));
-        sickNum += checkNeighbor((pSars + i), ((pSars + i) + 30));
-        sickNum += checkNeighbor((pSars + i), ((pSars + i) + 31));
+        Cell *currentPc = (pSars + i);
+        currentPc -> days++;
+        for (int k = 0; k < 8; k++) {
+          if ((currentPc + *(nindex + k)) -> isTaken == false || (i + *(nindex + i)) % rows == 0 || i + *(nindex + i) >= 0 && i + *(nindex + i) <= (rows - 1) || i + *(nindex + i) % rows == (rows - 1) || (i + *(nindex + i) >= ((rows * columns) - rows - 1) && (i + *(nindex + i) <= (rows * columns) - 1))) {
+            continue;
+          } else {
+            checkNeighbor(currentPc, currentPc + *(nindex +k));
+          }
+        }
       }
     }
+  /*
+  for(k=0;k<3;k++)
+    {
+        unit = (-31) + (30 * (k%3));
+        for(h=0;h<3;h++)
+        {
+            if((k==0) && ((id>=0) && (id<=(rows-1))))   // borde superior Y primer renglón
+                continue;
+            else if((h==0) && (id%30 == 0))             // izquierda Y primera columna
+                continue;
+            else if((h==2) && (id%30 == 29))            // derecha Y última columna
+                continue;
+            else if((k==2) && ((id>=((rows*cols)- 1 - rows)) && (id<=((rows*cols)-1)))) // abajo y último renglón
+                continue;
+            else if((h==1) && (k==1))                   // si se evalúa a sí mismo
+                continue;
+            else
+            {
+                printf("%d ", unit); // unit + ID
+                unit += 1;
+            }
+        }
+    } 
+*/
+
     //Información al usuario
     printMatrix(sarsM);
     printf("\nEnfermos = %d", sickNum);
