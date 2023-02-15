@@ -121,48 +121,20 @@ int main () {
         (pSars + i) -> pstatus = 2;
         sickNum--;
         restNum++;
-      }
-      if ((pSars + i) -> pstatus == 1) {
+      } else if ((pSars + i) -> pstatus == 1) {
         Cell *currentPc = (pSars + i);
         currentPc -> days++;
         for (int k = 0; k < 8; k++) {
-          if ((currentPc + *(nindex + k)) -> isTaken == false || (i + *(nindex + i)) % rows == 0 || i + *(nindex + i) >= 0 && i + *(nindex + i) <= (rows - 1) || i + *(nindex + i) % rows == (rows - 1) || (i + *(nindex + i) >= ((rows * columns) - rows - 1) && (i + *(nindex + i) <= (rows * columns) - 1))) {
+          if ((currentPc + *(nindex + k)) -> isTaken == false || (i + *(nindex + k)) % rows == 0 || i + *(nindex + k) >= 0 && i + *(nindex + k) <= (rows - 1) || i + *(nindex + k) % rows == (rows - 1) || (i + *(nindex + k) >= ((rows * columns) - rows - 1) && (i + *(nindex + k) <= (rows * columns) - 1))) {
             continue;
           } else {
-            checkNeighbor(currentPc, currentPc + *(nindex +k));
+            sickNum += checkNeighbor(currentPc, currentPc + *(nindex +k));
           }
         }
       }
     }
-  /*
-  for(k=0;k<3;k++)
-    {
-        unit = (-31) + (30 * (k%3));
-        for(h=0;h<3;h++)
-        {
-            if((k==0) && ((id>=0) && (id<=(rows-1))))   // borde superior Y primer renglón
-                continue;
-            else if((h==0) && (id%30 == 0))             // izquierda Y primera columna
-                continue;
-            else if((h==2) && (id%30 == 29))            // derecha Y última columna
-                continue;
-            else if((k==2) && ((id>=((rows*cols)- 1 - rows)) && (id<=((rows*cols)-1)))) // abajo y último renglón
-                continue;
-            else if((h==1) && (k==1))                   // si se evalúa a sí mismo
-                continue;
-            else
-            {
-                printf("%d ", unit); // unit + ID
-                unit += 1;
-            }
-        }
-    } 
-*/
-
     //Información al usuario
     printMatrix(sarsM);
-    printf("\nEnfermos = %d", sickNum);
-    printf("\nRecuperados = %d", restNum);
     printf("\nDias: %d", dayCount);
     dayCount++;
     scanf("%c", &enter);
