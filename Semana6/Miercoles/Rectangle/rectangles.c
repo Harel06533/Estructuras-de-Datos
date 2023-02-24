@@ -6,6 +6,7 @@ Rectangle createRect (float base, float height) {
   Rectangle newR = malloc(sizeof(RECT_S));
   newR -> base = base;
   newR -> height = height;
+  return newR;
 }
 
 //Retorna la base del rectangulo
