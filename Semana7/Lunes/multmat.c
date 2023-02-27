@@ -1,7 +1,7 @@
 /*
 * Archivos en C - Multiplicación de matríces
-VERSION 1.0.0 NO ES CORRECTA!!
 * Utiliza los mismos algoritmos que Semana6/Lunes/ejer2.c 
+* Los valores de los .txt son fijos, para obtener un result.txt diferente, es necesario modificarlos
 */
 #include <stdio.h>
 #include <stdlib.h>
@@ -10,80 +10,83 @@ VERSION 1.0.0 NO ES CORRECTA!!
 #define rows 3
 #define cols 3
 
-//Genera un Número random entre un comienzo y un límite
+/* Genera un número random entre un comienzo y un límite */
 int lrand (int start, int limit) {
-  return ((rand() % limit) + start);
+  return ((rand () % limit) + start);
 }
 
-/* Genera una matriz en 0 o con números random */
-int **fillMatrix (int r, int c, bool isRandom) {
+/* Inicializa las matríces en 0 */
+int **initMatrix (int r, int c) {
   int **matrix = malloc(r * sizeof(int *));
   for (int i = 0; i < r; i++) {
     matrix[i] = calloc(c, sizeof(int));
-    if (isRandom) {
-      for (int j = 0; j < c; j++) {
-        matrix[i][j] = lrand(0, 10);
-      }
-    }
   }
   return matrix;
 }
 
-/* Guarda los valores de las matríces en un archivo .txt */
-void fileMatrix (int **matrix, int r, int c, FILE *destFile) {
+/* Lee los datos de los .txt y los guarda en una matríz */
+void getValues (int **srcMat, FILE *sourceFile, int r, int c) {
   for (int i = 0; i < r; i++) {
     for (int j = 0; j < c; j++) {
-      fprintf(destFile, " %d ", matrix[i][j]);
+      fscanf(sourceFile, "%d", &srcMat[i][j]);
     }
-    fprintf(destFile, "\n");
   }
 }
 
-/* Multiplica 2 matríces y retorna el resultado */
-int **timesMatrix (int r, int c, int **m1, int **m2) {
-  int **resultM = fillMatrix(r, c, false);
+/* Multiplica las matríces */
+int **timesMatrix (int **m1, int **m2, int r, int c) {
+  int **resultM = initMatrix(r, c);
   for (int i = 0; i < r; i++) {
     for (int j = 0; j < c; j++) {
       for (int k = 0; k < c; k++) {
         resultM[i][j] += m1[i][k] * m2[k][j];
       }
     }
-  } 
+  }
   return resultM;
 }
 
-//Main
+/* Llena el .txt con los valores dados */
+void fileWrite (FILE *destFile, int **sourceMatrix, int r, int c) {
+  for (int i = 0; i < r; i++) {
+    for (int j = 0; j < c; j++) {
+      fprintf(destFile, "%d ", sourceMatrix[i][j]);
+    }
+    fprintf(destFile, "\n");
+  }
+}
+
+//MAIN 
 int main () {
   srand(time(NULL));
-  
-  //Inicializa los archivos como write para crear y sobreescribir
-  FILE *file_a = fopen("matrix_a.txt", "w");
-  FILE *file_b = fopen("matrix_c.txt", "w");
-  FILE *file_c = fopen("result.txt", "w");
 
-  //Validación
-  bool isValid = (file_a != NULL && file_b != NULL && file_c != NULL);
-  if (!isValid) {
-    fprintf(stderr, "Error al llenar los archivos");
+  //Inicializar archivos para lectura o escribir
+  FILE *file_a = fopen("matrix_a.txt", "r");
+  FILE *file_b = fopen("matrix_c.txt", "r");
+  FILE *res_file = fopen("result.txt", "w");
+
+  //Valida los archivos
+  if (file_a == NULL || file_b == NULL || res_file == NULL) {
+    fprintf(stderr, "Error al crear o buscar archivos");
     return -1;
   }
 
-  //Llena las matríces de manera lógica
-  int **matrix1 = fillMatrix(rows, cols, true);
-  int **matrix2 = fillMatrix(rows, cols, true);
-  int **resultMatrix = timesMatrix(rows, cols, matrix1, matrix2);
+  //Inicializa matríces en la memoria RAM
+  int **matrix1 = initMatrix(rows, cols);
+  int **matrix2 = initMatrix(rows, cols);
 
-  //Llena los archivos .txt con sus respectivas matríces
-  fileMatrix(matrix1, rows, cols, file_a);
-  fileMatrix(matrix2, rows, cols, file_b);
-  fileMatrix(resultMatrix, rows, cols, file_c);
+  //Obtener los valores de los .txt y guardarlos en las matríces
+  getValues(matrix1, file_a, rows, cols);
+  getValues(matrix2, file_b, rows, cols);
 
-  //Cierra los archivos para guardarlos en el almacenamiento y cerrar el buffer
+  //Multiplicar las matríces y guardarlas en un .txt
+  int **resultMatrix = timesMatrix(matrix1, matrix2, rows, cols);
+  fileWrite(res_file, resultMatrix, rows, cols);
+
+  //Cerrar los buffers, se guardan los cambios en el almacenamiento
   fclose(file_a);
   fclose(file_b);
-  fclose(file_c);
+  fclose(res_file);
 
-  //Salida correcta.
-  printf("Se han hecho las operaciones de manera correcta");
-  return 0;  
+  return 0;
 }
