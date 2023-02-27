@@ -1,5 +1,6 @@
 /*
 * Archivos en C - Multiplicación de matríces
+VERSION 1.0.0 NO ES CORRECTA!!
 * Utiliza los mismos algoritmos que Semana6/Lunes/ejer2.c 
 */
 #include <stdio.h>
