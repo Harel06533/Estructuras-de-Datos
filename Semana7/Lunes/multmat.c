@@ -10,11 +10,6 @@
 #define rows 3
 #define cols 3
 
-/* Genera un número random entre un comienzo y un límite */
-int lrand (int start, int limit) {
-  return ((rand () % limit) + start);
-}
-
 /* Inicializa las matríces en 0 */
 int **initMatrix (int r, int c) {
   int **matrix = malloc(r * sizeof(int *));
