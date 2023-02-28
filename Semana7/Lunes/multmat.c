@@ -5,8 +5,6 @@
 */
 #include <stdio.h>
 #include <stdlib.h>
-#include <time.h>
-#include <stdbool.h>
 #define rows 3
 #define cols 3
 
@@ -53,8 +51,6 @@ void fileWrite (FILE *destFile, int **sourceMatrix, int r, int c) {
 
 //MAIN 
 int main () {
-  srand(time(NULL));
-
   //Inicializar archivos para lectura o escribir
   FILE *file_a = fopen("matrix_a.txt", "r");
   FILE *file_b = fopen("matrix_c.txt", "r");
