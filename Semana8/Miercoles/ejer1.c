@@ -47,7 +47,7 @@ void addToList (List *list, int value) {
   node -> value = value;
   if (list -> firstValue == NULL) {
     list -> firstValue = node;
-    list -> lastValue = node;
+    list -> lastValue = list -> firstValue;
     return;
   }
   list -> lastValue -> next = node;
