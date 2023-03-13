@@ -92,8 +92,8 @@ int main () {
   /* Genera e imprime la lista */
   start = clock();
   genPrimeList(&primeList, limit);
-  printList(&primeList);
   end = clock();
+  printList(&primeList);
 
   /* Imprime el tiempo tomado */
   printf("\n\nTiempo de algoritmo fue de : %5.2f", ((double)(end - start)) / CLOCKS_PER_SEC);
