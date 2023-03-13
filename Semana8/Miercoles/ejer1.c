@@ -26,7 +26,7 @@ typedef enum _myBool {
  * 3. Retorna verdadero al salir de la iteración.
 */
 bool isPrime (int start, int value) {
-  for (int i = start; i * i <= value; i++) {
+  for (int i = start; i * i < value; i++) {
     if (value % i == 0) {
       return false;
     }
@@ -93,7 +93,6 @@ int main () {
   start = clock();
   genPrimeList(&primeList, limit);
   end = clock();
-  printList(&primeList);
 
   /* Imprime el tiempo tomado */
   printf("\n\nTiempo de algoritmo fue de : %5.2f", ((double)(end - start)) / CLOCKS_PER_SEC);
